@@ -1,6 +1,13 @@
-// Game States
-// "LOSE" - Player robot's health is zero or less
-//   * Player health reaches 0
+// set game logic into startGame()
+// once player defeated or no enemies endGame()
+//   *show player stat
+//   *ask if play again and loop back to game function
+// after skip or defeat enemy 
+//   *ask if they want to shop, if no resume, if yes shop()
+//   *shop() refill health, upgrade attack, leave
+//   *refill, subtract money and increase health
+//   *upgrade, subtract money and increase power
+//   *leave, alert goodbye and exit
 var playerName = window.prompt("What is your robot's name?");
 var playerHealth = 100;
 var playerAttack = 10;
@@ -45,7 +52,7 @@ var fight = function (enemyName) {
             window.alert(enemyName + " still has " + enemyHealth + " health left.");
         }
 
-        //remove player's health bu subtracting the amount set in enemyAttack variable
+        //remove player's health by subtracting the amount set in enemyAttack variable
         playerHealth = playerHealth - enemyAttack;
         console.log(
             enemyName + " attacked " + playerName + ". " + playerName + " now has " + playerHealth + " health remaining."
@@ -61,25 +68,55 @@ var fight = function (enemyName) {
     }
 
 };
-for (var i = 0; i < enemyNames.length; i++) {
+
+// function to start a new game
+var startGame = function() {
+    // reset player status
+    playerHealth = 100;
+    playerAttack = 10;
+    playerMoney = 10;
+
+    for (var i = 0; i < enemyNames.length; i++) {
+        if (playerHealth > 0) {
+            // let player know what round they are in, remember that arrays start at 0 so it needs to have 1 added to it
+            window.alert("Welcom to Robot Gladiators! Round " + ( i+ 1 ));
+            
+            // pick new enemy to fight based on the index of the enemyNames array
+            var pickedEnemyName = enemyNames[i];
+            
+            // reset enemyHealth before starting new fight
+            enemyHealth = 50;
+
+            //debugger
+            
+            //pass the pickedEnemyName variable's value into the fight function, which it will assume the value of the enemyName parameter
+            fight(pickedEnemyName);
+            
+        } else {
+            window.alert("You have lost your robot in battle! Game Over!");
+            break;
+        }
+    } 
+    endGame();
+};
+
+// function to end the entire game
+var endGame = function() {
     if (playerHealth > 0) {
-        // let player know what round they are in, remember that arrays start at 0 so it needs to have 1 added to it
-        window.alert("Welcom to Robot Gladiators! Round " + ( i+ 1 ));
-
-        // pick new enemy to fight based on teh index of the enemyNames array
-        var pickedEnemyName = enemyNames[i];
-
-        // reset enemyHealth before starting new fight
-        enemyHealth = 50;
-
-        //use debugger to pause script from running and check what's going on at that moment in code
-        //debugger;
-
-        //pass the pickedEnemyName variable's value into the fight function, which it will assume the value of the enemyName parameter
-        fight(pickedEnemyName);
-
+        window.alert("Great job, you've survived the game! You now have a score of " + playerMoney + ".");
     } else {
-        window.alert("You have lost your robot in battle! Game Over!");
-        break;
+        window.alert("You've lost your robot in battle.");
     }
-}
+
+    var playAgainConfirm = window.confirm("Would you like to play again?");
+
+    if (playAgainConfirm) {
+        // restart the game
+        startGame();
+    } else {
+        window.alert("Thank you for playing Robot Gladiators! Come back soon!");
+    }
+};
+
+//start game when page loads
+startGame();
